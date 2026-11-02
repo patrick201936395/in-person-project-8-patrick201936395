@@ -1,14 +1,24 @@
 // ==========================================
 // THEME SWITCHER
-// TODO: Implement theme switching with localStorage
 // ==========================================
 
 const themeToggle = document.querySelector('.theme-toggle');
 const root = document.documentElement;
 
-// TODO: Check for saved theme preference and apply it
+const currentTheme = localStorage.getItem('theme') || 'light';
+root.setAttribute('data-theme', currentTheme);
 
-// TODO: Add click event listener to toggle theme
+themeToggle.addEventListener('click', () => {
+    const newTheme = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+
+    root.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+
+    themeToggle.classList.add('spinning');
+    themeToggle.addEventListener('animationend', () => {
+        themeToggle.classList.remove('spinning');
+    }, { once: true });
+});
 
 // ==========================================
 // SMOOTH SCROLLING FOR NAVIGATION
@@ -36,12 +46,25 @@ document.querySelectorAll('.nav-link').forEach(link => {
 
 // ==========================================
 // INTERSECTION OBSERVER FOR ANIMATIONS
-// TODO: Implement scroll-triggered animations
 // ==========================================
 
-// TODO: Create IntersectionObserver for entrance animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
 
-// TODO: Observe all elements with .animate-on-scroll class
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.animate-on-scroll, .stagger-children').forEach(el => {
+    observer.observe(el);
+});
 
 // ==========================================
 // PARALLAX EFFECT
